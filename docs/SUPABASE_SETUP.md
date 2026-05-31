@@ -44,7 +44,7 @@ No usar la `service_role key` dentro de la app.
 Crear un archivo `.env` en la raíz usando `.env.example` como base:
 
 ```bash
-EXPO_PUBLIC_API_BASE_URL=http://localhost:3001
+EXPO_PUBLIC_API_BASE_URL=https://mi-ap.onrender.com
 EXPO_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
 ```

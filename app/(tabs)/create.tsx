@@ -72,11 +72,11 @@ export default function CreateScreen() {
         tone: "error",
         title: "No pudimos generar el plan",
         message:
-          "Revisá que el backend esté activo en localhost:3001 y que la API key esté configurada.",
+          "Revisá que el backend configurado esté online y que la API key esté activa en el servidor.",
       });
       Alert.alert(
         "No pudimos generar el plan",
-        "Revisá que el backend esté activo en localhost:3001 y que la API key esté configurada."
+        "Revisá que el backend configurado esté online y que la API key esté activa en el servidor."
       );
     }
   }
@@ -102,7 +102,7 @@ export default function CreateScreen() {
         <StatusFeedback
           tone="warning"
           title="Backend IA offline"
-          message={`La app local sigue funcionando, pero generar planes y coach necesitan ${backend.backendUrl || "el backend activo"}.`}
+          message={`La app sigue funcionando, pero generar planes y coach necesitan ${backend.backendUrl || "el backend activo"}.`}
         />
       ) : null}
 

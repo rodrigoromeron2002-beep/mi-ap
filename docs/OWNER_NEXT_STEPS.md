@@ -15,7 +15,7 @@
 
 - Confirmar nombre final: `Zentra`.
 - Confirmar bundle/package final: `com.zentra.app`.
-- Pasarme la URL publica del backend. La app local todavia apunta a `http://localhost:3001`, que no sirve para builds preview en dispositivo.
+- Mantener la URL publica del backend configurada en `.env` y EAS.
 - Crear `OPENAI_API_KEY` real.
 - Crear proyecto Supabase.
 - Ejecutar `docs/SUPABASE_SCHEMA.sql` en Supabase.

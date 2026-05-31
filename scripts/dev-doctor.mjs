@@ -36,10 +36,10 @@ addCheck(
   "Creá .env desde .env.example para conectar API/Supabase."
 );
 addCheck(
-  "API local configurada",
-  appEnv.includes("EXPO_PUBLIC_API_BASE_URL=http://localhost:3001") ||
-    appJson.expo?.extra?.apiBaseUrl === "http://localhost:3001",
-  "Recomendado para web local: EXPO_PUBLIC_API_BASE_URL=http://localhost:3001"
+  "API configurada",
+  appEnv.includes("EXPO_PUBLIC_API_BASE_URL=https://") ||
+    String(appJson.expo?.extra?.apiBaseUrl ?? "").startsWith("https://"),
+  "Para preview/produccion usá una URL publica HTTPS, por ejemplo https://mi-ap.onrender.com"
 );
 addCheck(
   "Supabase configurado",

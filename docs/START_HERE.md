@@ -42,7 +42,7 @@ npm run start:clear
 App `.env`:
 
 ```bash
-EXPO_PUBLIC_API_BASE_URL=http://localhost:3001
+EXPO_PUBLIC_API_BASE_URL=https://mi-ap.onrender.com
 EXPO_PUBLIC_SUPABASE_URL=
 EXPO_PUBLIC_SUPABASE_ANON_KEY=
 ```
@@ -77,7 +77,7 @@ lint, checks de produccion, release check, build del backend y export web.
 3. Crear Supabase, ejecutar `docs/SUPABASE_SCHEMA.sql` y cargar URL/anon key.
 4. Probar web, Expo Go, iOS y Android.
 5. Crear icono/splash finales.
-6. Cambiar `EXPO_PUBLIC_API_BASE_URL` a la URL publica del backend y dejar `EXPO_PUBLIC_DEV_UNLOCK_PRO=false`.
+6. Confirmar que `EXPO_PUBLIC_API_BASE_URL` apunte al backend publico y `EXPO_PUBLIC_DEV_UNLOCK_PRO=false`.
 7. Generar builds con EAS:
 
 ```bash

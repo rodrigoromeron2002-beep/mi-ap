@@ -1,15 +1,12 @@
-import { Platform } from "react-native";
 import Constants from "expo-constants";
 
-const LOCAL_IP = "172.16.0.176";
+const DEFAULT_API_BASE_URL = "https://mi-ap.onrender.com";
 const configuredApiBaseUrl = Constants.expoConfig?.extra?.apiBaseUrl;
 
 export const API_BASE_URL =
   typeof configuredApiBaseUrl === "string" && configuredApiBaseUrl.length > 0
     ? configuredApiBaseUrl
-    : Platform.OS === "web"
-    ? "http://localhost:3001"
-    : `http://${LOCAL_IP}:3001`;
+    : DEFAULT_API_BASE_URL;
 
 export const API_ENDPOINTS = {
   health: `${API_BASE_URL}/health`,
