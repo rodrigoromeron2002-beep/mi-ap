@@ -104,6 +104,11 @@ export function useAuth() {
         return null;
       }
 
+      if (error instanceof Error && /already registered|already.*register/i.test(error.message)) {
+        setAuthError("Ese email ya tiene cuenta. Tocá Entrar con esa contraseña o usá otro email.");
+        return null;
+      }
+
       if (error instanceof Error && error.message) {
         setAuthError(`No pudimos crear la cuenta: ${error.message}`);
         return null;

@@ -26,8 +26,38 @@ export function AuthCard({
 }: AuthCardProps) {
   const [draftEmail, setDraftEmail] = useState(email ?? "");
   const [password, setPassword] = useState("");
-  const credentialsInvalid = draftEmail.trim().length === 0 || password.length < 6;
-  const disabled = busy || !configured || credentialsInvalid;
+  const [formError, setFormError] = useState<string | null>(null);
+  const disabled = busy || !configured;
+  const visibleError = formError ?? error;
+
+  function validateCredentials() {
+    const cleanEmail = draftEmail.trim().toLowerCase();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setFormError("Ingresá un email válido.");
+      return null;
+    }
+
+    if (password.length < 6) {
+      setFormError("La contraseña tiene que tener al menos 6 caracteres.");
+      return null;
+    }
+
+    setFormError(null);
+    return { email: cleanEmail, password };
+  }
+
+  function submitSignIn() {
+    const credentials = validateCredentials();
+    if (!credentials) return;
+    onSignIn(credentials.email, credentials.password);
+  }
+
+  function submitSignUp() {
+    const credentials = validateCredentials();
+    if (!credentials) return;
+    onSignUp(credentials.email, credentials.password);
+  }
 
   return (
     <View style={styles.card}>
@@ -61,21 +91,32 @@ export function AuthCard({
         <>
           <TextInput
             value={draftEmail}
-            onChangeText={setDraftEmail}
+            onChangeText={(value) => {
+              setDraftEmail(value);
+              setFormError(null);
+            }}
             placeholder="email@zentra.app"
             placeholderTextColor={Colors.dark.textMuted}
             keyboardType="email-address"
+            textContentType="emailAddress"
+            inputMode="email"
             autoCapitalize="none"
             autoCorrect={false}
+            returnKeyType="next"
             style={styles.input}
           />
 
           <TextInput
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(value) => {
+              setPassword(value);
+              setFormError(null);
+            }}
             placeholder="Contraseña"
             placeholderTextColor={Colors.dark.textMuted}
+            textContentType="password"
             secureTextEntry
+            returnKeyType="done"
             style={styles.input}
           />
 
@@ -84,14 +125,14 @@ export function AuthCard({
               label={configured ? "Entrar" : "Configurar"}
               disabled={disabled}
               busy={busy}
-              onPress={() => onSignIn(draftEmail, password)}
+              onPress={submitSignIn}
             />
             <ActionButton
               label="Crear cuenta"
               disabled={disabled}
               busy={busy}
               secondary
-              onPress={() => onSignUp(draftEmail, password)}
+              onPress={submitSignUp}
             />
           </View>
         </>
@@ -107,7 +148,7 @@ export function AuthCard({
         </Pressable>
       )}
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {visibleError ? <Text style={styles.errorText}>{visibleError}</Text> : null}
     </View>
   );
 }
