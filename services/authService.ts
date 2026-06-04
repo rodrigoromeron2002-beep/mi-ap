@@ -7,6 +7,8 @@ type AuthResponse = {
   access_token?: string;
   refresh_token?: string;
   expires_in?: number;
+  id?: string;
+  email?: string;
   user?: {
     id?: string;
     email?: string;
@@ -14,8 +16,10 @@ type AuthResponse = {
 };
 
 function mapAuthResponse(data: AuthResponse): AuthSession {
-  if (!data.access_token || !data.user?.id) {
-    if (data.user?.id) {
+  const user = data.user ?? (data.id ? { id: data.id, email: data.email } : undefined);
+
+  if (!data.access_token || !user?.id) {
+    if (user?.id) {
       throw new Error("AUTH_EMAIL_CONFIRMATION_REQUIRED");
     }
 
@@ -31,8 +35,8 @@ function mapAuthResponse(data: AuthResponse): AuthSession {
     refreshToken: data.refresh_token,
     expiresAt,
     user: {
-      id: data.user.id,
-      email: data.user.email,
+      id: user.id,
+      email: user.email,
     },
   };
 }

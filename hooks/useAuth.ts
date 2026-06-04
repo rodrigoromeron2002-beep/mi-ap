@@ -72,7 +72,12 @@ export function useAuth() {
       const nextSession = await signInWithPassword(email.trim(), password);
       setSession(nextSession);
       return nextSession;
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && /confirm|verified|not confirmed/i.test(error.message)) {
+        setAuthError("Tu cuenta todavía no está confirmada. Abrí el email de Supabase y después iniciá sesión.");
+        return null;
+      }
+
       setAuthError("No pudimos iniciar sesión. Revisá email, contraseña o configuración.");
       return null;
     } finally {
@@ -96,6 +101,11 @@ export function useAuth() {
     } catch (error) {
       if (error instanceof Error && error.message === "AUTH_EMAIL_CONFIRMATION_REQUIRED") {
         setAuthError("Cuenta creada. Revisá tu email para confirmar el registro y después iniciá sesión.");
+        return null;
+      }
+
+      if (error instanceof Error && error.message) {
+        setAuthError(`No pudimos crear la cuenta: ${error.message}`);
         return null;
       }
 
