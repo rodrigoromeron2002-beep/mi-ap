@@ -9,7 +9,10 @@
     "icon": "./assets/images/icon.png",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.zentra.app"
+      "bundleIdentifier": "com.zentra.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.zentra.app",
