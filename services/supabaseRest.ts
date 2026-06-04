@@ -30,7 +30,7 @@ export async function supabaseAuthRequest<T>(
   });
 
   if (!response.ok) {
-    throw new Error(await readError(response));
+    throw new Error(await readError(response, path, response.status));
   }
 
   return (await response.json()) as T;
@@ -54,7 +54,7 @@ export async function supabaseDbRequest<T>(
   });
 
   if (!response.ok) {
-    throw new Error(await readError(response));
+    throw new Error(await readError(response, path, response.status));
   }
 
   if (response.status === 204) {
@@ -64,11 +64,23 @@ export async function supabaseDbRequest<T>(
   return (await response.json()) as T;
 }
 
-async function readError(response: Response) {
+async function readError(response: Response, path: string, status: number) {
   try {
-    const data = (await response.json()) as { error?: string; msg?: string; message?: string };
-    return data.message ?? data.msg ?? data.error ?? "Supabase request error";
+    const data = (await response.json()) as {
+      code?: string;
+      details?: string;
+      error?: string;
+      hint?: string;
+      msg?: string;
+      message?: string;
+    };
+    const message = data.message ?? data.msg ?? data.error ?? "Supabase request error";
+    const code = data.code ? ` [${data.code}]` : "";
+    const details = data.details ? ` Details: ${data.details}` : "";
+    const hint = data.hint ? ` Hint: ${data.hint}` : "";
+
+    return `${path} failed (${status})${code}: ${message}${details}${hint}`;
   } catch {
-    return "Supabase request error";
+    return `${path} failed (${status}): Supabase request error`;
   }
 }

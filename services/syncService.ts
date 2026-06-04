@@ -22,40 +22,55 @@ export async function syncUserData({
   const accessToken = session.accessToken;
   const userId = session.user.id;
 
-  await supabaseDbRequest("/profiles", {
-    method: "POST",
-    accessToken,
-    prefer: "resolution=merge-duplicates",
-    body: {
-      id: userId,
-      email: profile.email || session.user.email,
-      name: profile.name,
-      age_range: profile.ageRange,
-      training_preference: profile.trainingPreference,
-      health_note: profile.healthNote,
-      accepted_health_disclaimer: profile.acceptedHealthDisclaimer,
-      updated_at: new Date().toISOString(),
-    },
-  });
-
-  if (plans.length > 0) {
-    await supabaseDbRequest("/plans", {
+  await runSyncStep("perfil", () =>
+    supabaseDbRequest("/profiles", {
       method: "POST",
       accessToken,
       prefer: "resolution=merge-duplicates",
-      body: plans.map((plan) => mapPlanToRow(userId, plan)),
-    });
+      body: {
+        id: userId,
+        email: profile.email || session.user.email,
+        name: profile.name,
+        age_range: profile.ageRange,
+        training_preference: profile.trainingPreference,
+        health_note: profile.healthNote,
+        accepted_health_disclaimer: profile.acceptedHealthDisclaimer,
+        updated_at: new Date().toISOString(),
+      },
+    }),
+  );
+
+  if (plans.length > 0) {
+    await runSyncStep("planes", () =>
+      supabaseDbRequest("/plans", {
+        method: "POST",
+        accessToken,
+        prefer: "resolution=merge-duplicates",
+        body: plans.map((plan) => mapPlanToRow(userId, plan)),
+      }),
+    );
   }
 
   if (progressEntries.length > 0) {
-    await supabaseDbRequest("/progress_entries", {
-      method: "POST",
-      accessToken,
-      prefer: "resolution=merge-duplicates",
-      body: progressEntries.map((entry) => mapProgressEntryToRow(userId, entry)),
-    });
+    await runSyncStep("progreso", () =>
+      supabaseDbRequest("/progress_entries", {
+        method: "POST",
+        accessToken,
+        prefer: "resolution=merge-duplicates",
+        body: progressEntries.map((entry) => mapProgressEntryToRow(userId, entry)),
+      }),
+    );
   }
 
+}
+
+async function runSyncStep<T>(label: string, action: () => Promise<T>) {
+  try {
+    return await action();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Supabase request error";
+    throw new Error(`Falló sincronización de ${label}: ${message}`);
+  }
 }
 
 export async function upsertUserProfile(session: AuthSession, profile: UserProfile) {

@@ -39,8 +39,12 @@ export function useCloudSync() {
 
       setLastSyncedAt(new Date().toISOString());
       return true;
-    } catch {
-      setSyncError("No pudimos sincronizar con Supabase. Revisá tablas, RLS y credenciales.");
+    } catch (error) {
+      setSyncError(
+        error instanceof Error
+          ? error.message
+          : "No pudimos sincronizar con Supabase. Revisá tablas, RLS y credenciales.",
+      );
       return false;
     } finally {
       setSyncing(false);
@@ -57,8 +61,12 @@ export function useCloudSync() {
       const cloudData = await pullUserData(session);
       setLastPulledAt(new Date().toISOString());
       return cloudData;
-    } catch {
-      setSyncError("No pudimos traer datos desde Supabase. Revisá tablas, RLS y credenciales.");
+    } catch (error) {
+      setSyncError(
+        error instanceof Error
+          ? error.message
+          : "No pudimos traer datos desde Supabase. Revisá tablas, RLS y credenciales.",
+      );
       return null;
     } finally {
       setPulling(false);
