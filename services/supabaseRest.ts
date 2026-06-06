@@ -61,7 +61,12 @@ export async function supabaseDbRequest<T>(
     return null as T;
   }
 
-  return (await response.json()) as T;
+  const text = await response.text();
+  if (!text) {
+    return null as T;
+  }
+
+  return JSON.parse(text) as T;
 }
 
 async function readError(response: Response, path: string, status: number) {
